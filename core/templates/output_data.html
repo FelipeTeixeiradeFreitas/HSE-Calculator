@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple AJAX Example</title>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+</head>
+<body>
+
+    <div id="ajax-response">
+        <!-- Estrutura inicial da tabela -->
+        <table class="table table-bordered">
+            <thead id="table-head">
+            </thead>
+            <tbody id="table-body">
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        
+        $(document).ready(function() {
+            $.ajax({
+                url: '/tabela_dados/apresenta_tabela_transf/',
+                method: 'GET',
+                success: function(data) {
+                    var valores_tb_tmp_li_elemento = [];
+                    var valores_tb_tmp_li_tipo_dado = [];
+        
+                    for (var i = 0; i < data.length; i++) {
+                        var valor_tb_tmp_li_elemento = data[i]['tb_tmp_li_elemento'];
+                        valores_tb_tmp_li_elemento.push(valor_tb_tmp_li_elemento);
+        
+                        var valor_tb_tmp_li_tipo_dado = JSON.parse(data[i]['tb_tmp_li_tipo_dado']);
+                        valores_tb_tmp_li_tipo_dado.push(valor_tb_tmp_li_tipo_dado);
+                    }
+        
+                    console.log(valores_tb_tmp_li_elemento.length);
+        
+                    // Adiciona as colunas à cabeça da tabela
+                    $('#table-head').append('<tr>');
+                    for (var i = 0; i < valores_tb_tmp_li_elemento.length; i++) {
+                        $('#table-head').append(`<th>${valores_tb_tmp_li_elemento[i]}</th>`);
+                    }
+                    $('#table-head').append('</tr>');
+        
+                    // Adiciona as células ao corpo da tabela
+                    for (var j = 0; j < valores_tb_tmp_li_tipo_dado[0].length; j++) {
+                        $('#table-body').append('<tr>');
+                        for (var i = 0; i < valores_tb_tmp_li_tipo_dado.length; i++) {
+                            $('#table-body').append(`<td>${valores_tb_tmp_li_tipo_dado[i][j]}</td>`);
+                        }
+                        $('#table-body').append('</tr>');
+                    }
+        
+                    console.log(data);
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+
+
+    </script>
+
+</body>
+</html>

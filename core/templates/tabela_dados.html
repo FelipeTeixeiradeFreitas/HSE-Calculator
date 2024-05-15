@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <!-- Meta tags Obrigatórias -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    
+    <style>
+        .text-amarillo {
+            color: #FFA500; /* Código de cor para um tom de amarelo escuro (quase laranja) */
+        }
+        
+        #resultado {
+        background-color: #f8f9fa; /* Cor de fundo */
+        color: #212529; /* Cor do texto */
+        border-color: #ced4da; /* Cor da borda */
+}
+    </style>
+      
+
+
+    <title>Tabelaço</title>
+    
+  </head>
+<body>
+<!-- ################################## BORDA ########################## -->
+    <div class="container mt-5 col-md-6 text-center "><h4>CALCULADORA PARA SAÍDAS DE EMERGÊNCIA</h4></div>
+    <div class="container mt-5 col-md-6 text-center "><p>Dimensionamento Seguro de Saídas: Atendendo às Normas IT08, Corpo de Bombeiros de MG e Decreto nº 47.998/2020</p></div>
+    <div class="container mt-3 col-md-6 rounded p-3 bg-light text-dark">
+
+<!-- ################################## SELEÇÃO DE ABAS ########################## -->
+
+    
+
+<!-- ################################## EXECUÇÃO CADA ABA ########################## -->
+
+    <div class="row mb-3"></div>
+
+
+
+    <div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="nav-instrumentos" role="tabpanel" aria-labelledby="nav-instrumentos-tab">
+        <!-- Tabela para Opção 1 -->
+        <div class="container">
+            {% csrf_token %}
+            <div class="row mb-3">
+                <div class="form-group col-12 col-md-12 input-group-sm">
+                    <label for="tipo_rosca_acess">1 - Ocupação</label>
+                    <select class="form-control rounded-pill" id="os-type1" onchange="ajaxOptionNextLevel1(this.value);">
+                        <option value="opcao1">---</option>
+                        <option value="Residencial">Residencial</option>
+                        <option value="Serviço de Hospedagem">Serviço de Hospedagem</option>
+                        <option value="Comercial">Comercial</option>
+                        <option value="Serviço profissional">Serviço profissional</option>
+                        <option value="Educacional e cultura física">Educacional e cultura física</option>
+                        <option value="Local de Reunião de Público">Local de Reunião de Público</option>
+                        <option value="Serviço automotivo e assemelhados">Serviço automotivo e assemelhados</option>
+                        <option value="Serviço de saúde e institucional">Serviço de saúde e institucional</option>
+                        <option value="Indústria">Indústria</option>
+                        <option value="Depósito">Depósito</option>
+                        <option value="Explosivos">Explosivos</option>
+                        <option value="Especial">Especial</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="form-group col-12 col-md-12 input-group-sm">
+                    <label for="tipo_rosca_acess">2 - Descrição</label>
+                    <select class="form-control rounded-pill" id="subgrupo" onchange="ajaxOptionNextLevel2(this.value);">
+                        <option id="--" selected>---</option>
+                    </select>
+                </div>
+            </div>
+            
+            
+            <div class="row mb-3">
+                <div class="form-group col-6 col-md-6 input-group-sm align-items-center">
+                    <label id="descricao_label" for="tipo_rosca_acess">3 - Informar...</label>
+                    <input type="text" class="form-control rounded-pill" id="valor_variavel">
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col">
+                    <label for="resultado" class="font-weight-bold">Resultado:</label>
+                    <div id="resultado_acessos" class="border rounded p-2">Espaçamento mínimo para acessos e descargas</div>
+                    <div id="resultado_escadas" class="border rounded p-2">Espaçamento mínimo para escadas e rampas</div>
+                    <div id="resultado_portas" class="border rounded p-2">Espaçamento mínimo para portas</div>
+                    <button type="button" class="btn btn-primary" onclick="ajaxCalculo()">Calcular</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    </div>
+
+</div>
+<!-- Adicione os scripts do Bootstrap para JavaScript -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+<!--<script src="http://localhost:8000/script_tab_dados.js"></script>-->
+<script>
+    function ajaxOptionNextLevel1(value) {
+        debugger;
+        if (value !== 'opcao1') {
+            $.ajax({
+                url: "next_level1/", // Caminho do Ajax
+                type: "GET", // http method
+                dataType: "json",
+                data: {'OCUPACAO': value}, // Envia form pela solicitação do GET
+                success: function (data) {
+                    let itens = data['OPCOES']
+                    let options_itens = '<option id="--" value="--" selected>---</option>'
+                    for (var i = 0; i < itens.length; i++) {
+                            let new_option = `<option class="px-2 rounded text-truncate">${itens[i]}</option>`
+                            document.getElementById('subgrupo').innerHTML += new_option
+                        }
+                    /*$('#descricao_label').text(data['LABEL']);*/
+                    
+                }
+            });
+        }
+    }
+    
+    function ajaxOptionNextLevel2() {
+        debugger;
+        var subgrupoSelect = document.getElementById('subgrupo');
+        var valorSelecionado = subgrupoSelect.value;
+        $.ajax({
+            url: "next_level2/", // Caminho do Ajax
+            type: "GET", // http method
+            dataType: "json",
+            data: {'SUBGRUPO': valorSelecionado}, // Envia form pela solicitação do GET
+            success: function (data) {
+                    $('#descricao_label').text(data['LABEL']);
+                    debugger;
+                }
+            });
+        }
+    
+        
+        function ajaxCalculo() {
+        debugger;
+        var subgrupoSelect = document.getElementById('subgrupo');
+        var valorSelecionado = subgrupoSelect.value;
+        var valor_variavel = document.getElementById('valor_variavel').value;
+        var dicionario = {'SUBGRUPO': valorSelecionado, 'VARIAVEL': valor_variavel}
+        const csrf = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+        
+        $.ajax({
+            url: "next_level2/", // Caminho do Ajax
+            type: "POST", // http method
+            headers:{'X-CSRFToken':csrf},
+            dataType: "json",
+            data: {'new_item': JSON.stringify(dicionario)},
+            success: function (data) {
+                debugger;
+                $('#resultado_acessos').text(data['DESCARGAS']);
+                $('#resultado_escadas').text(data['ESCADAS']);
+                $('#resultado_portas').text(data['PORTAS']);
+                }
+            });
+        }
+    
+</script>
+
+</body>
+
+</html>
+
+
